@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { reviewWriting } from '@/lib/ai/openai'
 import { verifyApiAuth, unauthorizedResponse } from '@/lib/auth/api-auth'
 
+export const runtime = 'edge'
+
 export async function POST(request: NextRequest) {
   // Auth check
   const authResult = verifyApiAuth(request)

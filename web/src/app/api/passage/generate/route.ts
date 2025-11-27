@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { generatePassage, type DifficultyLevel, type PassageLength, type TopicCategory } from '@/lib/ai/openai'
 import { verifyApiAuth, unauthorizedResponse } from '@/lib/auth/api-auth'
 
+export const runtime = 'edge'
+
 const RANDOM_TOPICS: Record<TopicCategory, string[]> = {
   humanities: [
     'The importance of empathy in human relationships',
