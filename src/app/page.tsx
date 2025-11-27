@@ -1,4 +1,19 @@
+'use client'
+
+import { ProtectedPage } from '@/components/ProtectedPage'
+import { useAuth } from '@/contexts/AuthContext'
+
 export default function Home() {
+  return (
+    <ProtectedPage>
+      <HomeContent />
+    </ProtectedPage>
+  )
+}
+
+function HomeContent() {
+  const { logout } = useAuth()
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8">
       <div className="max-w-4xl mx-auto text-center animate-fade-in">
@@ -66,10 +81,20 @@ export default function Home() {
           </a>
         </div>
 
+        {/* Logout Button */}
+        <div className="mt-8">
+          <button
+            onClick={logout}
+            className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          >
+            로그아웃
+          </button>
+        </div>
+
         {/* Status Badge */}
-        <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm">
+        <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm">
           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          Phase 1: 읽기 &amp; 듣기 사용 가능
+          모든 기능 사용 가능
         </div>
       </div>
     </main>
@@ -85,4 +110,3 @@ function FeatureCard({ icon, title, description }: { icon: string; title: string
     </div>
   )
 }
-

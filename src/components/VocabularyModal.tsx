@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuthenticatedFetch } from './AuthenticatedFetch'
 
 interface WordDefinition {
   word: string
@@ -23,6 +24,7 @@ export function VocabularyModal({ word, context, onClose, onAdd }: VocabularyMod
   const [definition, setDefinition] = useState<WordDefinition | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const authFetch = useAuthenticatedFetch()
 
   useEffect(() => {
     const fetchDefinition = async () => {
@@ -30,7 +32,7 @@ export function VocabularyModal({ word, context, onClose, onAdd }: VocabularyMod
       setError(null)
 
       try {
-        const response = await fetch('/api/vocabulary/define', {
+        const response = await authFetch('/api/vocabulary/define', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ word, context }),
@@ -51,6 +53,7 @@ export function VocabularyModal({ word, context, onClose, onAdd }: VocabularyMod
     }
 
     fetchDefinition()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word, context])
 
   const handleAdd = () => {

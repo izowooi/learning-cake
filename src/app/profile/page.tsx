@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { UserStats } from '@/components/UserStats'
 import { AchievementList, DEFAULT_ACHIEVEMENTS, type Achievement } from '@/components/AchievementBadge'
 import { StreakCalendar } from '@/components/StreakCalendar'
+import { ProtectedPage } from '@/components/ProtectedPage'
 
 // Mock data - in real app, this would come from Supabase
 const mockUserData = {
@@ -55,6 +56,14 @@ const getAchievements = (): Achievement[] => {
 }
 
 export default function ProfilePage() {
+  return (
+    <ProtectedPage>
+      <ProfilePageContent />
+    </ProtectedPage>
+  )
+}
+
+function ProfilePageContent() {
   const [achievements] = useState<Achievement[]>(getAchievements())
 
   return (

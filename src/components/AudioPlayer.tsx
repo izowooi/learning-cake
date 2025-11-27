@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useAuthenticatedFetch } from './AuthenticatedFetch'
 
 type TTSAccent = 'us' | 'uk'
 type PlaybackSpeed = 0.5 | 1.0 | 1.5 | 2.0
@@ -26,6 +27,7 @@ export function AudioPlayer({ text, onTimeUpdate }: AudioPlayerProps) {
   const [duration, setDuration] = useState(0)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const authFetch = useAuthenticatedFetch()
 
   // Clean up audio URL on unmount or when text changes
   useEffect(() => {
@@ -41,7 +43,7 @@ export function AudioPlayer({ text, onTimeUpdate }: AudioPlayerProps) {
 
     setIsLoading(true)
     try {
-      const response = await fetch('/api/tts/generate', {
+      const response = await authFetch('/api/tts/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, accent: selectedAccent }),

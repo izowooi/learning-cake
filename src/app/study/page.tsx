@@ -7,6 +7,8 @@ import { AudioPlayer } from '@/components/AudioPlayer'
 import { VocabularyModal } from '@/components/VocabularyModal'
 import { QuizComponent } from '@/components/QuizComponent'
 import { WritingComponent } from '@/components/WritingComponent'
+import { ProtectedPage } from '@/components/ProtectedPage'
+import { useAuthenticatedFetch } from '@/components/AuthenticatedFetch'
 import Link from 'next/link'
 
 interface GeneratedPassage {
@@ -30,6 +32,14 @@ interface WordDefinition {
 }
 
 export default function StudyPage() {
+  return (
+    <ProtectedPage>
+      <StudyPageContent />
+    </ProtectedPage>
+  )
+}
+
+function StudyPageContent() {
   const [passage, setPassage] = useState<GeneratedPassage | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -38,6 +48,7 @@ export default function StudyPage() {
   const [showQuiz, setShowQuiz] = useState(false)
   const [showWriting, setShowWriting] = useState(false)
   const [showVocabularyList, setShowVocabularyList] = useState(false)
+  const authFetch = useAuthenticatedFetch()
 
   const handleGenerate = async (params: {
     topic?: string
@@ -49,7 +60,7 @@ export default function StudyPage() {
     setError(null)
 
     try {
-      const response = await fetch('/api/passage/generate', {
+      const response = await authFetch('/api/passage/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),

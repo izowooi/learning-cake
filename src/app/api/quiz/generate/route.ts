@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateQuiz } from '@/lib/ai/openai'
+import { verifyApiAuth, unauthorizedResponse } from '@/lib/auth/api-auth'
 
 export async function POST(request: NextRequest) {
+  // Auth check
+  const authResult = verifyApiAuth(request)
+  if (!authResult.authorized) {
+    return unauthorizedResponse(authResult.error)
+  }
+
   try {
     const body = await request.json()
     const { passage, title } = body as {

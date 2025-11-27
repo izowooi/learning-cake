@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePassage, type DifficultyLevel, type PassageLength, type TopicCategory } from '@/lib/ai/openai'
+import { verifyApiAuth, unauthorizedResponse } from '@/lib/auth/api-auth'
 
 const RANDOM_TOPICS: Record<TopicCategory, string[]> = {
   humanities: [
@@ -57,6 +58,12 @@ function getRandomTopic(category: TopicCategory): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Auth check
+  const authResult = verifyApiAuth(request)
+  if (!authResult.authorized) {
+    return unauthorizedResponse(authResult.error)
+  }
+
   try {
     const body = await request.json()
     const { topic, difficulty, length, category } = body as {

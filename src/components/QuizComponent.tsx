@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuthenticatedFetch } from './AuthenticatedFetch'
 
 interface QuizQuestion {
   question: string
@@ -25,6 +26,7 @@ export function QuizComponent({ passage, title, onComplete, onClose }: QuizCompo
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+  const authFetch = useAuthenticatedFetch()
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -32,7 +34,7 @@ export function QuizComponent({ passage, title, onComplete, onClose }: QuizCompo
       setError(null)
 
       try {
-        const response = await fetch('/api/quiz/generate', {
+        const response = await authFetch('/api/quiz/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ passage, title }),
@@ -53,6 +55,7 @@ export function QuizComponent({ passage, title, onComplete, onClose }: QuizCompo
     }
 
     fetchQuiz()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [passage, title])
 
   const currentQuestion = questions[currentIndex]

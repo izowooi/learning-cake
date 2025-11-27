@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuthenticatedFetch } from './AuthenticatedFetch'
 
 interface GrammarFeedback {
   original: string
@@ -27,6 +28,7 @@ export function WritingComponent({ passage, title, onClose }: WritingComponentPr
   const [review, setReview] = useState<AIReview | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const authFetch = useAuthenticatedFetch()
 
   const handleSubmit = async () => {
     if (content.length < 10) {
@@ -38,7 +40,7 @@ export function WritingComponent({ passage, title, onClose }: WritingComponentPr
     setError(null)
 
     try {
-      const response = await fetch('/api/writing/review', {
+      const response = await authFetch('/api/writing/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
