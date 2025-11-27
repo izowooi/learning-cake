@@ -59,6 +59,7 @@ npm install
 
 ### 3. 환경변수 설정
 
+`.env.example`을 복사하여 `.env.local` 파일을 생성하세요:
 
 ```bash
 cp .env.example .env.local
