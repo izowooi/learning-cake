@@ -8,11 +8,13 @@ interface GameState {
   theme: Theme;
   results: number[];
   currentRound: number;
+  animationEnabled: boolean;
 }
 
 interface GameContextType {
   gameState: GameState;
   setTheme: (theme: Theme) => void;
+  setAnimationEnabled: (enabled: boolean) => void;
   addResult: (time: number) => void;
   resetGame: () => void;
   nextRound: () => void;
@@ -22,6 +24,7 @@ const initialState: GameState = {
   theme: 'minimal',
   results: [],
   currentRound: 1,
+  animationEnabled: false,
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -31,6 +34,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback((theme: Theme) => {
     setGameState(prev => ({ ...prev, theme }));
+  }, []);
+
+  const setAnimationEnabled = useCallback((enabled: boolean) => {
+    setGameState(prev => ({ ...prev, animationEnabled: enabled }));
   }, []);
 
   const addResult = useCallback((time: number) => {
@@ -56,7 +63,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <GameContext.Provider value={{ gameState, setTheme, addResult, resetGame, nextRound }}>
+    <GameContext.Provider value={{ gameState, setTheme, setAnimationEnabled, addResult, resetGame, nextRound }}>
       {children}
     </GameContext.Provider>
   );

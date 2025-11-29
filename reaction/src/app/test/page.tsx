@@ -28,10 +28,12 @@ export default function TestPage() {
     setReactionTime(null);
     setIsVisible(true);
     
-    // 깜빡임 효과 시작
-    blinkIntervalRef.current = setInterval(() => {
-      setIsVisible(prev => !prev);
-    }, 800);
+    // 애니메이션이 켜져 있을 때만 깜빡임 효과 시작
+    if (gameState.animationEnabled) {
+      blinkIntervalRef.current = setInterval(() => {
+        setIsVisible(prev => !prev);
+      }, 800);
+    }
     
     // 2-5초 랜덤 후 초록색으로 변경
     const randomDelay = 2000 + Math.random() * 3000;
@@ -43,7 +45,7 @@ export default function TestPage() {
       setPhase('go');
       startTimeRef.current = performance.now();
     }, randomDelay);
-  }, []);
+  }, [gameState.animationEnabled]);
 
   // 컴포넌트 마운트 시 게임 시작
   useEffect(() => {
@@ -176,8 +178,8 @@ export default function TestPage() {
             disabled={phase === 'waiting' || phase === 'result'}
             className={`game-circle ${circleContent.color} ${phase === 'go' ? 'active' : ''}`}
             style={{
-              opacity: (phase === 'ready' && !isVisible) ? 0 : 1,
-              transition: phase === 'ready' ? 'opacity 0.4s ease-in-out' : 'none',
+              opacity: (phase === 'ready' && !isVisible && gameState.animationEnabled) ? 0 : 1,
+              transition: (phase === 'ready' && gameState.animationEnabled) ? 'opacity 0.4s ease-in-out' : 'none',
             }}
           >
             {circleContent.showText && (

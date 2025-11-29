@@ -10,8 +10,9 @@ const themes: { id: Theme; name: string; description: string; emoji: string }[] 
 ];
 
 export default function Home() {
-  const { gameState, setTheme, resetGame } = useGame();
+  const { gameState, setTheme, setAnimationEnabled, resetGame } = useGame();
   const [selectedTheme, setSelectedTheme] = useState<Theme>(gameState.theme);
+  const [animationOn, setAnimationOn] = useState(gameState.animationEnabled);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,10 @@ export default function Home() {
     document.body.setAttribute('data-theme', selectedTheme);
     setTheme(selectedTheme);
   }, [selectedTheme, setTheme]);
+
+  useEffect(() => {
+    setAnimationEnabled(animationOn);
+  }, [animationOn, setAnimationEnabled]);
 
   if (!isLoaded) {
     return null;
@@ -43,7 +48,7 @@ export default function Home() {
         </p>
 
         {/* 테마 선택 */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
             테마 선택
           </h2>
@@ -60,6 +65,45 @@ export default function Home() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* 애니메이션 토글 */}
+        <div className="mb-8">
+          <div 
+            className="flex items-center justify-center gap-4 p-4 rounded-xl"
+            style={{ background: 'var(--card-bg, rgba(0,0,0,0.05))' }}
+          >
+            <span 
+              className="text-sm font-medium"
+              style={{ color: 'var(--foreground)', opacity: animationOn ? 0.5 : 1 }}
+            >
+              애니메이션 OFF
+            </span>
+            <button
+              onClick={() => setAnimationOn(!animationOn)}
+              className="relative w-14 h-8 rounded-full transition-colors duration-200"
+              style={{ 
+                background: animationOn ? 'var(--accent)' : 'var(--foreground)',
+                opacity: animationOn ? 1 : 0.3
+              }}
+            >
+              <div
+                className="absolute top-1 w-6 h-6 bg-white rounded-full transition-transform duration-200"
+                style={{ 
+                  transform: animationOn ? 'translateX(28px)' : 'translateX(4px)'
+                }}
+              />
+            </button>
+            <span 
+              className="text-sm font-medium"
+              style={{ color: 'var(--foreground)', opacity: animationOn ? 1 : 0.5 }}
+            >
+              애니메이션 ON
+            </span>
+          </div>
+          <p className="text-xs mt-2 opacity-50" style={{ color: 'var(--foreground)' }}>
+            {animationOn ? '빨간 원이 깜빡입니다' : '정확한 측정을 위해 애니메이션이 꺼져있습니다'}
+          </p>
         </div>
 
         {/* 시작 버튼 */}
