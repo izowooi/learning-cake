@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+/* ===== 기본 변수 ===== */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #ef4444;
+  --secondary: #22c55e;
+  --accent: #3b82f6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* ===== 테마 1: 미니멀/모던 ===== */
+[data-theme="minimal"] {
+  --background: #fafafa;
+  --foreground: #1a1a2e;
+  --primary: #dc2626;
+  --secondary: #16a34a;
+  --accent: #2563eb;
+  --card-bg: #ffffff;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --button-radius: 12px;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="minimal"] .game-circle {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="minimal"] .card {
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  border-radius: 16px;
+}
+
+/* ===== 테마 2: 레트로 게임 ===== */
+[data-theme="retro"] {
+  --background: #1a1c2c;
+  --foreground: #f4f4f4;
+  --primary: #ff004d;
+  --secondary: #00e436;
+  --accent: #29adff;
+  --card-bg: #2c2f4a;
+  --card-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+  --button-radius: 0px;
+  --font-family: 'Press Start 2P', 'Courier New', monospace;
+  --pixel-border: 4px solid #f4f4f4;
+}
+
+[data-theme="retro"] body {
+  background: #1a1c2c;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  image-rendering: pixelated;
+}
+
+[data-theme="retro"] .game-circle {
+  border: var(--pixel-border);
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="retro"] .card {
+  background: var(--card-bg);
+  border: var(--pixel-border);
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="retro"] * {
+  font-size: 0.85em;
+  letter-spacing: 1px;
+}
+
+/* ===== 테마 3: 네온/사이버펑크 ===== */
+[data-theme="neon"] {
+  --background: #0f0f1a;
+  --foreground: #ffffff;
+  --primary: #ff0055;
+  --secondary: #00ff88;
+  --accent: #00d4ff;
+  --card-bg: rgba(20, 20, 40, 0.8);
+  --card-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+  --button-radius: 8px;
+  --font-family: 'Orbitron', 'Rajdhani', sans-serif;
+  --neon-glow-red: 0 0 10px #ff0055, 0 0 20px #ff0055, 0 0 40px #ff0055;
+  --neon-glow-green: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 40px #00ff88;
+  --neon-glow-blue: 0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 40px #00d4ff;
+}
+
+[data-theme="neon"] body {
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0f0f1a 100%);
+  background-attachment: fixed;
+}
+
+[data-theme="neon"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 49.5%, rgba(0, 212, 255, 0.03) 50%, transparent 50.5%),
+    linear-gradient(transparent 49.5%, rgba(0, 212, 255, 0.03) 50%, transparent 50.5%);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme="neon"] .game-circle {
+  box-shadow: var(--neon-glow-red);
+}
+
+[data-theme="neon"] .game-circle.active {
+  box-shadow: var(--neon-glow-green);
+}
+
+[data-theme="neon"] .card {
+  background: var(--card-bg);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="neon"] h1, [data-theme="neon"] h2 {
+  text-shadow: var(--neon-glow-blue);
+}
+
+/* ===== 테마 4: 귀여운/캐주얼 ===== */
+[data-theme="cute"] {
+  --background: #fff5f7;
+  --foreground: #4a4a6a;
+  --primary: #ff6b9d;
+  --secondary: #7dd3a8;
+  --accent: #9b8cff;
+  --card-bg: #ffffff;
+  --card-shadow: 0 8px 24px rgba(255, 107, 157, 0.15);
+  --button-radius: 24px;
+  --font-family: 'Nunito', 'Comic Neue', cursive, sans-serif;
+}
+
+[data-theme="cute"] body {
+  background: linear-gradient(180deg, #fff5f7 0%, #ffeef3 50%, #f5f0ff 100%);
+  background-attachment: fixed;
+}
+
+[data-theme="cute"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(155, 140, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme="cute"] .game-circle {
+  box-shadow: 0 8px 32px rgba(255, 107, 157, 0.3);
+}
+
+[data-theme="cute"] .card {
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  border-radius: 24px;
+  border: 2px solid rgba(155, 140, 255, 0.2);
+}
+
+[data-theme="cute"] button {
+  font-weight: 700;
+}
+
+/* ===== 공통 애니메이션 ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+.animate-pulse-custom {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-blink {
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+.animate-countdown {
+  animation: countdownPop 0.5s ease-out forwards;
+}
+
+.animate-star {
+  animation: starPop 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* ===== 게임 원 기본 스타일 ===== */
+.game-circle {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-circle.red {
+  background: var(--primary);
+}
+
+.game-circle.green {
+  background: var(--secondary);
+}
+
+@media (min-width: 640px) {
+  .game-circle {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+/* ===== 버튼 스타일 ===== */
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  padding: 16px 32px;
+  border-radius: var(--button-radius);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  padding: 16px 32px;
+  border-radius: var(--button-radius);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2px solid var(--foreground);
+}
+
+.btn-secondary:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* ===== 테마 선택 카드 ===== */
+.theme-card {
+  padding: 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.theme-card:hover {
+  transform: translateY(-4px);
+}
+
+.theme-card.selected {
+  border-color: var(--accent);
+}
+
+.theme-card.minimal-preview {
+  background: #fafafa;
+  color: #1a1a2e;
+}
+
+.theme-card.retro-preview {
+  background: #1a1c2c;
+  color: #f4f4f4;
+  font-family: 'Courier New', monospace;
+}
+
+.theme-card.neon-preview {
+  background: linear-gradient(135deg, #0f0f1a, #1a0a2e);
+  color: #00d4ff;
+  text-shadow: 0 0 10px #00d4ff;
+}
+
+.theme-card.cute-preview {
+  background: linear-gradient(135deg, #fff5f7, #f5f0ff);
+  color: #ff6b9d;
+}
