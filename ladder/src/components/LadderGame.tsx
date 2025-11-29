@@ -225,32 +225,44 @@ export default function LadderGame() {
         >
           {/* 상단 이름 입력 */}
           <div 
-            className="flex justify-between mb-4 px-2"
+            className="relative mb-4"
             style={{ 
-              marginLeft: participantCount > 1 ? 0 : '50%',
-              transform: participantCount > 1 ? 'none' : 'translateX(-50%)'
+              width: dimensions.width,
+              height: 70,
+              margin: '0 auto'
             }}
           >
-            {Array.from({ length: participantCount }).map((_, index) => (
-              <div 
-                key={`name-${index}`} 
-                className="flex flex-col items-center"
-                style={{ width: participantCount > 1 ? `${100 / participantCount}%` : 'auto' }}
-              >
+            {Array.from({ length: participantCount }).map((_, index) => {
+              // 수직선과 동일한 x 위치 계산
+              const xPosition = participantCount > 1 
+                ? (index / (participantCount - 1)) * 100 
+                : 50
+              
+              return (
                 <div 
-                  className="w-4 h-4 rounded-full mb-2 shadow-lg"
-                  style={{ backgroundColor: PARTICIPANT_COLORS[index % PARTICIPANT_COLORS.length] }}
-                />
-                <input
-                  type="text"
-                  value={names[index] || ''}
-                  onChange={(e) => handleNameChange(index, e.target.value)}
-                  placeholder={`참가자${index + 1}`}
-                  className="input-field max-w-[80px] md:max-w-[100px] text-xs md:text-sm"
-                  disabled={isPlaying}
-                />
-              </div>
-            ))}
+                  key={`name-${index}`} 
+                  className="absolute flex flex-col items-center"
+                  style={{ 
+                    left: `${xPosition}%`,
+                    transform: 'translateX(-50%)',
+                    top: 0
+                  }}
+                >
+                  <div 
+                    className="w-4 h-4 rounded-full mb-2 shadow-lg"
+                    style={{ backgroundColor: PARTICIPANT_COLORS[index % PARTICIPANT_COLORS.length] }}
+                  />
+                  <input
+                    type="text"
+                    value={names[index] || ''}
+                    onChange={(e) => handleNameChange(index, e.target.value)}
+                    placeholder={`참가자${index + 1}`}
+                    className="input-field w-[70px] md:w-[90px] text-xs md:text-sm"
+                    disabled={isPlaying}
+                  />
+                </div>
+              )
+            })}
           </div>
 
           {/* 사다리 SVG */}
@@ -335,28 +347,40 @@ export default function LadderGame() {
 
           {/* 하단 경품 입력 */}
           <div 
-            className="flex justify-between mt-4 px-2"
+            className="relative mt-4"
             style={{ 
-              marginLeft: participantCount > 1 ? 0 : '50%',
-              transform: participantCount > 1 ? 'none' : 'translateX(-50%)'
+              width: dimensions.width,
+              height: 50,
+              margin: '0 auto'
             }}
           >
-            {Array.from({ length: participantCount }).map((_, index) => (
-              <div 
-                key={`prize-${index}`} 
-                className="flex flex-col items-center"
-                style={{ width: participantCount > 1 ? `${100 / participantCount}%` : 'auto' }}
-              >
-                <input
-                  type="text"
-                  value={prizes[index] || ''}
-                  onChange={(e) => handlePrizeChange(index, e.target.value)}
-                  placeholder={`경품${index + 1}`}
-                  className="input-field max-w-[80px] md:max-w-[100px] text-xs md:text-sm"
-                  disabled={isPlaying}
-                />
-              </div>
-            ))}
+            {Array.from({ length: participantCount }).map((_, index) => {
+              // 수직선과 동일한 x 위치 계산
+              const xPosition = participantCount > 1 
+                ? (index / (participantCount - 1)) * 100 
+                : 50
+              
+              return (
+                <div 
+                  key={`prize-${index}`} 
+                  className="absolute flex flex-col items-center"
+                  style={{ 
+                    left: `${xPosition}%`,
+                    transform: 'translateX(-50%)',
+                    top: 0
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={prizes[index] || ''}
+                    onChange={(e) => handlePrizeChange(index, e.target.value)}
+                    placeholder={`경품${index + 1}`}
+                    className="input-field w-[70px] md:w-[90px] text-xs md:text-sm"
+                    disabled={isPlaying}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
 
