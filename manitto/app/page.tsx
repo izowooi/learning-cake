@@ -38,7 +38,7 @@ export default function HomePage() {
     });
 
     // 이름 입력 페이지로 이동
-    router.push(`/group/${newGroup.id}`);
+    router.push(`/group?id=${newGroup.id}`);
   };
 
   return (

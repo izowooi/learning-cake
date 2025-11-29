@@ -129,7 +129,7 @@ export default function AdminPage() {
               <div className="text-4xl mb-2">🤔</div>
               <p className="text-[var(--foreground)]/60">아직 매칭이 완료되지 않은 그룹입니다.</p>
               <Link
-                href={`/group/${searchedGroup.id}`}
+                href={`/group?id=${searchedGroup.id}`}
                 className="inline-block mt-4 text-[var(--primary)] hover:underline"
               >
                 그룹 관리 페이지로 이동 →
@@ -180,7 +180,7 @@ export default function AdminPage() {
                   
                   <div className="flex gap-2">
                     <Link
-                      href={group.matchings ? `/group/${group.id}/result` : `/group/${group.id}`}
+                      href={group.matchings ? `/result?id=${group.id}` : `/group?id=${group.id}`}
                       className="p-2 rounded-lg hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-colors"
                       title="보기"
                     >
