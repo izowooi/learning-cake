@@ -6,9 +6,7 @@ import { useGame, Theme } from '@/contexts/GameContext';
 
 const themes: { id: Theme; name: string; description: string; emoji: string }[] = [
   { id: 'minimal', name: '미니멀', description: '깔끔하고 모던한 디자인', emoji: '✨' },
-  { id: 'retro', name: '레트로', description: '8bit 게임 스타일', emoji: '👾' },
   { id: 'neon', name: '네온', description: '사이버펑크 감성', emoji: '🌃' },
-  { id: 'cute', name: '귀여운', description: '파스텔 캐주얼', emoji: '🌸' },
 ];
 
 export default function Home() {
