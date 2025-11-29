@@ -174,13 +174,10 @@ export default function TestPage() {
           <button
             onClick={handleCircleClick}
             disabled={phase === 'waiting' || phase === 'result'}
-            className={`game-circle ${circleContent.color} ${phase === 'go' ? 'active' : ''} 
-              ${(phase === 'ready' && !isVisible) ? 'animate-fade-out' : 'animate-fade-in'}
-              ${phase === 'go' ? 'animate-glow' : ''}
-              transition-all duration-300`}
+            className={`game-circle ${circleContent.color} ${phase === 'go' ? 'active' : ''}`}
             style={{
               opacity: (phase === 'ready' && !isVisible) ? 0 : 1,
-              transform: phase === 'go' ? 'scale(1.05)' : 'scale(1)',
+              transition: phase === 'ready' ? 'opacity 0.4s ease-in-out' : 'none',
             }}
           >
             {circleContent.showText && (
