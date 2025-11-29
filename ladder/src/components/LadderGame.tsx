@@ -350,7 +350,7 @@ export default function LadderGame() {
             className="relative mt-4"
             style={{ 
               width: dimensions.width,
-              height: 50,
+              height: 70,
               margin: '0 auto'
             }}
           >
@@ -359,6 +359,12 @@ export default function LadderGame() {
               const xPosition = participantCount > 1 
                 ? (index / (participantCount - 1)) * 100 
                 : 50
+              
+              // 결과가 나왔을 때 이 경품에 도착한 참가자의 색상 찾기
+              const arrivedPath = showResults 
+                ? paths.find(p => p.resultIndex === index)
+                : null
+              const prizeColor = arrivedPath?.color
               
               return (
                 <div 
@@ -370,13 +376,26 @@ export default function LadderGame() {
                     top: 0
                   }}
                 >
+                  {/* 결과가 나왔을 때 색상 표시 */}
+                  {showResults && prizeColor && (
+                    <div 
+                      className="w-4 h-4 rounded-full mb-2 shadow-lg"
+                      style={{ backgroundColor: prizeColor }}
+                    />
+                  )}
                   <input
                     type="text"
                     value={prizes[index] || ''}
                     onChange={(e) => handlePrizeChange(index, e.target.value)}
                     placeholder={`경품${index + 1}`}
-                    className="input-field w-[70px] md:w-[90px] text-xs md:text-sm"
+                    className="input-field w-[70px] md:w-[90px] text-xs md:text-sm transition-all duration-300"
                     disabled={isPlaying}
+                    style={showResults && prizeColor ? {
+                      color: prizeColor,
+                      borderColor: prizeColor,
+                      boxShadow: `0 0 10px ${prizeColor}40`,
+                      fontWeight: 'bold'
+                    } : {}}
                   />
                 </div>
               )
