@@ -461,7 +461,7 @@ export default function LadderGame() {
 
         {/* 푸터 */}
         <footer className="text-center mt-12 text-white/30 text-sm">
-          <p>Made with ❤️ for fair random selection</p>
+          <p>Made by Jonghyun</p>
         </footer>
       </div>
     </div>
