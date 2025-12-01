@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ladder-game.pages.dev'), // TODO: Update with actual deployment URL
+  metadataBase: new URL('https://ladderi.pages.dev'), // TODO: Update with actual deployment URL
   title: '사다리타기 | Ladder Game',
   description: '랜덤 사다리타기 게임으로 공정하게 결과를 정해보세요!',
   keywords: ['사다리타기', '사다리게임', '추첨', '랜덤', 'ladder game'],
