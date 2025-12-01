@@ -19,8 +19,31 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://reactioni.pages.dev"),
   title: "반응속도 테스트",
   description: "당신의 반응속도를 테스트해보세요!",
+  openGraph: {
+    title: "반응속도 테스트",
+    description: "당신의 반응속도를 테스트해보세요!",
+    url: "/",
+    siteName: "반응속도 테스트",
+    locale: "ko_KR",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "반응속도 테스트 미리보기",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "반응속도 테스트",
+    description: "당신의 반응속도를 테스트해보세요!",
+    images: ["/opengraph-image.png"],
+  },
 };
 
 export default function RootLayout({
