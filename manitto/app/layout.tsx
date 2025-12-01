@@ -9,8 +9,25 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://manitto.pages.dev"),
   title: "마니또",
   description: "쉽고 재미있는 마니또 매칭 서비스",
+  openGraph: {
+    title: "마니또",
+    description: "쉽고 재미있는 마니또 매칭 서비스",
+    url: "https://manitto.pages.dev",
+    siteName: "마니또",
+    locale: "ko_KR",
+    type: "website",
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: '마니또 OpenGraph Image',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
