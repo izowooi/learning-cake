@@ -51,7 +51,7 @@ export default function AppDrawer({
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-fade-in"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -64,8 +64,9 @@ export default function AppDrawer({
         aria-hidden={!isOpen}
         className={`
           fixed top-0 left-0 h-full w-80 max-w-[90vw]
-          bg-gradient-to-br from-slate-900/95 via-purple-900/95 to-slate-900/95
-          backdrop-blur-xl border-r border-white/10
+          bg-gradient-to-br from-orange-50/98 via-amber-50/98 to-red-50/98
+          dark:from-orange-950/98 dark:via-amber-950/98 dark:to-red-950/98
+          backdrop-blur-xl border-r border-orange-200/30 dark:border-orange-800/30
           shadow-2xl z-50
           transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -77,14 +78,15 @@ export default function AppDrawer({
           <div className="flex items-center justify-between mb-6">
             <h2
               id="drawer-title"
-              className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500"
+              className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-400 dark:to-red-400"
             >
               다른 앱 보기
             </h2>
             <button
               onClick={() => setIsOpen(false)}
               className="w-10 h-10 flex items-center justify-center
-                       bg-white/10 hover:bg-white/20 rounded-lg
+                       bg-orange-200/50 hover:bg-orange-300/60 dark:bg-orange-900/50 dark:hover:bg-orange-800/60
+                       text-orange-800 dark:text-orange-200 rounded-lg
                        transition-all duration-200"
               aria-label="드로워 닫기"
             >
@@ -104,8 +106,8 @@ export default function AppDrawer({
           </div>
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-white/40 text-xs text-center">
+          <div className="mt-6 pt-6 border-t border-orange-200/30 dark:border-orange-800/30">
+            <p className="text-orange-600/60 dark:text-orange-400/60 text-xs text-center">
               Learning Cake 프로젝트
             </p>
           </div>
