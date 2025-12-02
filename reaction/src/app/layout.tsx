@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Orbitron, Nunito } from "next/font/google";
 import "./globals.css";
+import AppDrawer from '@/components/AppDrawer'
+import { getOtherApps } from '@/data/apps'
 import { GameProvider } from "@/contexts/GameContext";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -65,6 +68,7 @@ export default function RootLayout({
       >
         <GameProvider>
           {children}
+          <AppDrawer apps={getOtherApps('reaction')} />
         </GameProvider>
       </body>
     </html>
