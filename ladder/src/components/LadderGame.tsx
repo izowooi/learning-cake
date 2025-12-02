@@ -32,9 +32,11 @@ export default function LadderGame() {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 600, height: 400 })
+  const [isMounted, setIsMounted] = useState(false)
 
   // 반응형 크기 조정
   useEffect(() => {
+    setIsMounted(true)
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = Math.min(containerRef.current.offsetWidth - 40, 800)
@@ -219,9 +221,10 @@ export default function LadderGame() {
         </div>
 
         {/* 사다리 영역 */}
-        <div 
+        <div
           ref={containerRef}
           className="bg-white/5 backdrop-blur-lg rounded-2xl p-4 md:p-6 mb-6 border border-white/10"
+          suppressHydrationWarning
         >
           {/* 상단 이름 입력 */}
           <div 
