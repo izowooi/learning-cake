@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import AppDrawer from '@/components/AppDrawer'
+import { getOtherApps } from '@/data/apps'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ladderi.pages.dev'), // TODO: Update with actual deployment URL
@@ -45,6 +47,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <AppDrawer apps={getOtherApps('ladder')} />
       </body>
     </html>
   )
