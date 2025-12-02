@@ -64,7 +64,7 @@ export default function AppDrawer({
         aria-hidden={!isOpen}
         className={`
           fixed top-0 left-0 h-full w-80 max-w-[90vw]
-          bg-gradient-to-br from-slate-900/95 via-purple-900/95 to-slate-900/95
+          bg-gray-900/95
           backdrop-blur-xl border-r border-white/10
           shadow-2xl z-50
           transition-transform duration-300 ease-out
@@ -77,13 +77,14 @@ export default function AppDrawer({
           <div className="flex items-center justify-between mb-6">
             <h2
               id="drawer-title"
-              className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500"
+              className="text-2xl font-bold text-white"
             >
               다른 앱 보기
             </h2>
             <button
               onClick={() => setIsOpen(false)}
               className="w-10 h-10 flex items-center justify-center
+                       text-white
                        bg-white/10 hover:bg-white/20 rounded-lg
                        transition-all duration-200"
               aria-label="드로워 닫기"
