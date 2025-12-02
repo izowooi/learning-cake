@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import AppDrawer from "@/components/AppDrawer";
+import { getOtherApps } from "@/data/apps";
 
 const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans",
@@ -35,6 +37,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const otherApps = getOtherApps('manitto');
+
   return (
     <html lang="ko">
       <body className={`${notoSansKR.variable} antialiased`}>
@@ -42,6 +46,7 @@ export default function RootLayout({
           <main className="container mx-auto px-4 py-8 max-w-lg">
             {children}
           </main>
+          <AppDrawer apps={otherApps} position="left" />
         </div>
       </body>
     </html>
