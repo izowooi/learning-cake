@@ -112,6 +112,30 @@ export default function HomePage() {
           관리자 페이지
         </Link>
       </div>
+
+      {/* 푸터 */}
+      <footer className="text-center mt-12 text-white/30 text-sm">
+        <p>Copyright (C) 2025 jonghyun</p>
+        <p>
+          <a
+            href="https://github.com/izowooi/learning-cake/tree/main/manitto"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white/50 transition-colors"
+          >
+            소스 코드 보기
+          </a>
+          {' / '}
+          <a
+            href="https://github.com/izowooi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white/50 transition-colors"
+          >
+            izowooi
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
