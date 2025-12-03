@@ -119,6 +119,32 @@ export default function Home() {
           <p>원이 초록색으로 바뀌면 최대한 빠르게 터치하세요!</p>
           <p className="mt-1">총 2회 테스트를 진행합니다.</p>
         </div>
+
+        {/* 푸터 */}
+        <footer className="text-center mt-12 text-sm" style={{ color: 'var(--foreground)', opacity: 0.3 }}>
+          <p>Copyright (C) 2025 jonghyun</p>
+          <p>
+            <a
+              href="https://github.com/izowooi/learning-cake/tree/main/reaction"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-70"
+              style={{ color: 'var(--foreground)' }}
+            >
+              소스 코드 보기
+            </a>
+            {' / '}
+            <a
+              href="https://github.com/izowooi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-70"
+              style={{ color: 'var(--foreground)' }}
+            >
+              izowooi
+            </a>
+          </p>
+        </footer>
       </div>
     </main>
   );
