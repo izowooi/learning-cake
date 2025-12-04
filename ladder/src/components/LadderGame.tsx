@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { 
-  generateHorizontalLines, 
-  calculatePaths, 
+import {
+  generateHorizontalLines,
+  calculatePaths,
   createPathString,
   calculatePathLength,
   HorizontalLine,
   LadderPath,
   PARTICIPANT_COLORS
 } from '@/utils/ladderLogic'
+import { isWebShareSupported, shareContent, copyToClipboard } from '@/utils/shareUtils'
+import Toast from './Toast'
 
 const MIN_PARTICIPANTS = 2
 const MAX_PARTICIPANTS = 15
@@ -28,7 +30,12 @@ export default function LadderGame() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showResults, setShowResults] = useState(false)
   const [animationProgress, setAnimationProgress] = useState(0)
-  
+  const [isSharing, setIsSharing] = useState(false)
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error'
+  } | null>(null)
+
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 600, height: 400 })
@@ -85,6 +92,46 @@ export default function LadderGame() {
     setIsPlaying(false)
     setAnimationProgress(0)
   }, [participantCount])
+
+  // 공유
+  const handleShare = useCallback(async () => {
+    // 클라이언트에서만 실행
+    if (typeof window === 'undefined') return
+
+    // 이미 공유 중이면 중단
+    if (isSharing) return
+
+    setIsSharing(true)
+
+    try {
+      const shareData = {
+        title: '사다리타기 | Ladder Game',
+        text: '랜덤 사다리타기 게임으로 공정하게 결과를 정해보세요!',
+        url: window.location.href
+      }
+
+      // 클릭 시점에 Web Share API 지원 여부 확인
+      if (isWebShareSupported()) {
+        // Web Share API 사용
+        const result = await shareContent(shareData)
+        if (result === 'error') {
+          setToast({ message: '공유에 실패했습니다', type: 'error' })
+        }
+        // success나 cancelled는 피드백 없음
+      } else {
+        // Fallback: URL 복사
+        const success = await copyToClipboard(shareData.url)
+        if (success) {
+          setToast({ message: 'URL이 복사되었습니다', type: 'success' })
+        } else {
+          setToast({ message: '복사에 실패했습니다', type: 'error' })
+        }
+      }
+    } finally {
+      // 공유 완료 후 상태 해제
+      setTimeout(() => setIsSharing(false), 500)
+    }
+  }, [isSharing])
 
   // 게임 시작
   const handleStart = useCallback(() => {
@@ -162,13 +209,45 @@ export default function LadderGame() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* 헤더 */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 mb-2 drop-shadow-lg">
-            🪜 사다리타기
-          </h1>
-          <p className="text-white/60 text-sm md:text-base">
-            공정한 추첨을 위한 랜덤 사다리 게임
-          </p>
+        <header className="mb-8 relative">
+          {/* 공유 버튼 - 우측 상단 고정 */}
+          <div className="absolute top-0 right-0 z-10">
+            <button
+              onClick={handleShare}
+              disabled={isSharing}
+              className="w-10 h-10 flex items-center justify-center
+                         rounded-lg bg-white/5 backdrop-blur-sm border border-white/10
+                         hover:bg-white/10 hover:border-white/20
+                         active:scale-95 transition-all duration-200
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="공유하기"
+              title="이 게임 공유하기"
+            >
+              <svg
+                className="w-5 h-5 text-white/80"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* 타이틀 영역 */}
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 mb-2 drop-shadow-lg">
+              🪜 사다리타기
+            </h1>
+            <p className="text-white/60 text-sm md:text-base">
+              공정한 추첨을 위한 랜덤 사다리 게임
+            </p>
+          </div>
         </header>
 
         {/* 설정 영역 */}
@@ -486,6 +565,15 @@ export default function LadderGame() {
           </p>
         </footer>
       </div>
+
+      {/* Toast 알림 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }
