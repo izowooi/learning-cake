@@ -1,4 +1,4 @@
-import { ref, get, set, remove, query, orderByChild, equalTo } from 'firebase/database';
+import { ref, get, set, remove } from 'firebase/database';
 import { getFirebaseDatabase } from './firebase';
 import { Group, GroupCreateInput, Matching, MissionRecord } from './types';
 import { generatePassword } from './password';
@@ -61,17 +61,10 @@ export async function findGroupByNameAndLeader(
 export async function findGroupByPassword(password: string): Promise<Group | null> {
   if (!isClient()) return null;
 
-  const db = getFirebaseDatabase();
-  const groupsRef = ref(db, GROUPS_PATH);
-  const passwordQuery = query(groupsRef, orderByChild('password'), equalTo(password));
-
   try {
-    const snapshot = await get(passwordQuery);
-    if (!snapshot.exists()) return null;
-
-    const data = snapshot.val();
-    const groups = Object.values(data) as Group[];
-    return groups[0] || null;
+    // 인덱스 없이 전체 그룹에서 검색
+    const groups = await getAllGroups();
+    return groups.find((g) => g.password === password) || null;
   } catch (error) {
     console.error('Failed to find group by password:', error);
     return null;
