@@ -51,13 +51,19 @@ function GroupPageContent() {
     }
 
     try {
+      console.log('멤버 추가 시도:', groupId, name);
       const updatedGroup = await addMember(groupId, name);
+      console.log('멤버 추가 결과:', updatedGroup);
       if (updatedGroup) {
         setGroup(updatedGroup);
         setNewMemberName('');
+      } else {
+        setError('멤버 추가 실패: 그룹을 찾을 수 없습니다.');
       }
     } catch (err) {
-      setError('멤버 추가 중 오류가 발생했습니다.');
+      console.error('멤버 추가 에러:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`멤버 추가 중 오류: ${errorMessage}`);
     }
   };
 

@@ -136,7 +136,7 @@ export async function addMember(
   const group = await getGroupById(groupId);
   if (!group) return null;
 
-  const updatedMembers = [...group.members, memberName];
+  const updatedMembers = [...(group.members || []), memberName];
   return updateGroup(groupId, { members: updatedMembers });
 }
 
@@ -149,7 +149,7 @@ export async function updateMember(
   const group = await getGroupById(groupId);
   if (!group) return null;
 
-  const updatedMembers = group.members.map(m => m === oldName ? newName : m);
+  const updatedMembers = (group.members || []).map(m => m === oldName ? newName : m);
   return updateGroup(groupId, { members: updatedMembers });
 }
 
@@ -161,7 +161,7 @@ export async function removeMember(
   const group = await getGroupById(groupId);
   if (!group) return null;
 
-  const updatedMembers = group.members.filter(m => m !== memberName);
+  const updatedMembers = (group.members || []).filter(m => m !== memberName);
   return updateGroup(groupId, { members: updatedMembers });
 }
 
