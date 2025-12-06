@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createGroup, findGroupByNameAndLeader } from '@/lib/firebase-storage';
+import { Mission } from '@/lib/types';
+
+interface MissionInput {
+  title: string;
+  description: string;
+  score: number;
+}
 
 export default function HomePage() {
   const router = useRouter();
@@ -11,6 +18,37 @@ export default function HomePage() {
   const [leaderName, setLeaderName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // 미션 관련 상태
+  const [missionsEnabled, setMissionsEnabled] = useState(false);
+  const [missions, setMissions] = useState<MissionInput[]>([]);
+  const [newMission, setNewMission] = useState<MissionInput>({
+    title: '',
+    description: '',
+    score: 10,
+  });
+
+  const handleAddMission = () => {
+    if (!newMission.title.trim() || !newMission.description.trim()) {
+      setError('미션 제목과 내용을 입력해주세요.');
+      return;
+    }
+    if (newMission.score < 1 || newMission.score > 100) {
+      setError('점수는 1~100 사이여야 합니다.');
+      return;
+    }
+    if (missions.length >= 5) {
+      setError('미션은 최대 5개까지 추가할 수 있습니다.');
+      return;
+    }
+    setMissions([...missions, { ...newMission }]);
+    setNewMission({ title: '', description: '', score: 10 });
+    setError('');
+  };
+
+  const handleRemoveMission = (index: number) => {
+    setMissions(missions.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +74,8 @@ export default function HomePage() {
       const newGroup = await createGroup({
         groupName: groupName.trim(),
         leaderName: leaderName.trim(),
+        missionsEnabled,
+        missions: missionsEnabled ? missions : [],
       });
 
       // 이름 입력 페이지로 이동
@@ -90,6 +130,124 @@ export default function HomePage() {
             />
           </div>
 
+          {/* 미션 설정 토글 */}
+          <div className="border-t border-[var(--border)] pt-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <label htmlFor="missionsEnabled" className="text-sm font-medium">
+                  미션 기능
+                </label>
+                <p className="text-xs text-[var(--foreground)]/60 mt-1">
+                  마니또 활동 미션을 추가할 수 있습니다
+                </p>
+              </div>
+              <button
+                type="button"
+                id="missionsEnabled"
+                onClick={() => setMissionsEnabled(!missionsEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  missionsEnabled ? 'bg-[var(--primary)]' : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    missionsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 미션 추가 섹션 */}
+          {missionsEnabled && (
+            <div className="space-y-4 bg-[var(--background)] rounded-xl p-4 border border-[var(--border)]">
+              <h3 className="text-sm font-semibold">미션 추가 (최대 5개)</h3>
+
+              {/* 기존 미션 목록 */}
+              {missions.length > 0 && (
+                <div className="space-y-2">
+                  {missions.map((mission, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start justify-between bg-[var(--card-bg)] rounded-lg p-3 border border-[var(--border)]"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">{mission.title}</span>
+                          <span className="text-xs bg-[var(--primary)]/20 text-[var(--primary)] px-2 py-0.5 rounded-full">
+                            {mission.score}점
+                          </span>
+                        </div>
+                        <p className="text-xs text-[var(--foreground)]/60 mt-1">
+                          {mission.description}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMission(index)}
+                        className="text-red-500 hover:text-red-700 p-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* 새 미션 입력 폼 */}
+              {missions.length < 5 && (
+                <div className="space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      value={newMission.title}
+                      onChange={(e) => setNewMission({ ...newMission, title: e.target.value })}
+                      placeholder="미션 제목"
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--card-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      value={newMission.description}
+                      onChange={(e) => setNewMission({ ...newMission, description: e.target.value })}
+                      placeholder="미션 내용"
+                      rows={2}
+                      className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--card-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] resize-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-[var(--foreground)]/70">점수:</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={newMission.score}
+                        onChange={(e) => setNewMission({ ...newMission, score: Number(e.target.value) })}
+                        className="w-20 px-2 py-1 text-sm rounded-lg border border-[var(--border)] bg-[var(--card-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddMission}
+                      className="flex-1 bg-[var(--secondary)] hover:bg-[var(--secondary)]/80 text-white text-sm font-medium py-2 px-3 rounded-lg transition-all"
+                    >
+                      미션 추가
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {missions.length === 5 && (
+                <p className="text-xs text-[var(--foreground)]/60 text-center">
+                  최대 5개의 미션을 추가했습니다
+                </p>
+              )}
+            </div>
+          )}
+
           {error && (
             <div className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
               ⚠️ {error}
@@ -106,8 +264,17 @@ export default function HomePage() {
         </form>
       </div>
 
-      {/* 관리자 페이지 링크 */}
-      <div className="text-center">
+      {/* 구성원/관리자 페이지 링크 */}
+      <div className="flex justify-center gap-6">
+        <Link
+          href="/member"
+          className="inline-flex items-center gap-2 text-[var(--foreground)]/60 hover:text-[var(--primary)] transition-colors text-sm"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          내 매칭 확인
+        </Link>
         <Link
           href="/admin"
           className="inline-flex items-center gap-2 text-[var(--foreground)]/60 hover:text-[var(--primary)] transition-colors text-sm"

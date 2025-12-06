@@ -1,6 +1,6 @@
 import { ref, get, set, remove, query, orderByChild, equalTo } from 'firebase/database';
 import { getFirebaseDatabase } from './firebase';
-import { Group, GroupCreateInput, Matching } from './types';
+import { Group, GroupCreateInput, Matching, MissionRecord } from './types';
 import { generatePassword } from './password';
 
 const GROUPS_PATH = 'manitto/groups';
@@ -87,6 +87,12 @@ export async function createGroup(input: GroupCreateInput): Promise<Group> {
   const db = getFirebaseDatabase();
   const id = crypto.randomUUID();
 
+  // 미션에 ID 부여
+  const missions = (input.missions || []).map((m) => ({
+    ...m,
+    id: crypto.randomUUID(),
+  }));
+
   const newGroup: Group = {
     id,
     groupName: input.groupName,
@@ -95,6 +101,8 @@ export async function createGroup(input: GroupCreateInput): Promise<Group> {
     members: [],
     matchings: null,
     createdAt: new Date().toISOString(),
+    missionsEnabled: input.missionsEnabled || false,
+    missions,
   };
 
   const groupRef = ref(db, `${GROUPS_PATH}/${id}`);
@@ -186,5 +194,75 @@ export async function deleteGroup(id: string): Promise<boolean> {
   } catch (error) {
     console.error('Failed to delete group:', error);
     return false;
+  }
+}
+
+// 매칭 비밀번호로 그룹과 매칭 찾기
+export async function findMatchingByPassword(
+  matchingPassword: string
+): Promise<{ group: Group; matching: Matching } | null> {
+  if (!isClient()) return null;
+
+  try {
+    const groups = await getAllGroups();
+
+    for (const group of groups) {
+      if (!group.matchings) continue;
+
+      const matching = group.matchings.find(
+        (m) => m.matchingPassword === matchingPassword
+      );
+
+      if (matching) {
+        return { group, matching };
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Failed to find matching by password:', error);
+    return null;
+  }
+}
+
+// 미션 기록 추가
+export async function addMissionRecord(
+  groupId: string,
+  matchingPassword: string,
+  missionId: string,
+  note: string
+): Promise<Group | null> {
+  if (!isClient()) return null;
+
+  try {
+    const group = await getGroupById(groupId);
+    if (!group || !group.matchings) return null;
+
+    const matchingIndex = group.matchings.findIndex(
+      (m) => m.matchingPassword === matchingPassword
+    );
+
+    if (matchingIndex === -1) return null;
+
+    const newRecord: MissionRecord = {
+      missionId,
+      completedAt: new Date().toISOString(),
+      note,
+    };
+
+    // 매칭의 미션 기록에 추가
+    const updatedMatchings = [...group.matchings];
+    updatedMatchings[matchingIndex] = {
+      ...updatedMatchings[matchingIndex],
+      missionRecords: [
+        ...(updatedMatchings[matchingIndex].missionRecords || []),
+        newRecord,
+      ],
+    };
+
+    return updateGroup(groupId, { matchings: updatedMatchings });
+  } catch (error) {
+    console.error('Failed to add mission record:', error);
+    return null;
   }
 }

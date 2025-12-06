@@ -135,11 +135,99 @@ export default function AdminPage() {
           </div>
 
           {searchedGroup.matchings && searchedGroup.matchings.length > 0 ? (
-            <MatchingResult
-              matchings={searchedGroup.matchings}
-              leaderName={searchedGroup.leaderName}
-              groupName={searchedGroup.groupName}
-            />
+            <>
+              <MatchingResult
+                matchings={searchedGroup.matchings}
+                leaderName={searchedGroup.leaderName}
+                groupName={searchedGroup.groupName}
+              />
+
+              {/* 미션 수행 내역 */}
+              {searchedGroup.missionsEnabled && (searchedGroup.missions || []).length > 0 && (
+                <div className="mt-6 pt-6 border-t border-[var(--border)]">
+                  <h3 className="text-lg font-semibold mb-4">미션 수행 현황</h3>
+
+                  {searchedGroup.matchings.map((matching, index) => {
+                    const missionRecords = matching.missionRecords || [];
+                    const totalScore = missionRecords.reduce((sum, record) => {
+                      const mission = (searchedGroup.missions || []).find((m) => m.id === record.missionId);
+                      return sum + (mission?.score || 0);
+                    }, 0);
+
+                    return (
+                      <div key={index} className="mb-4 bg-[var(--background)] rounded-xl p-4 border border-[var(--border)]">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-[var(--secondary)]">{matching.from}</span>
+                            <span className="text-xs text-[var(--foreground)]/60">
+                              (→ {matching.to})
+                            </span>
+                          </div>
+                          <span className="text-sm font-semibold text-[var(--primary)]">
+                            총 {totalScore}점
+                          </span>
+                        </div>
+
+                        {missionRecords.length > 0 ? (
+                          <div className="space-y-2">
+                            {missionRecords.map((record, recordIndex) => {
+                              const mission = (searchedGroup.missions || []).find((m) => m.id === record.missionId);
+                              return (
+                                <div key={recordIndex} className="text-sm bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-green-600">✅</span>
+                                    <span className="font-medium">{mission?.title || '알 수 없는 미션'}</span>
+                                    <span className="text-xs bg-[var(--primary)]/20 text-[var(--primary)] px-2 py-0.5 rounded-full">
+                                      +{mission?.score || 0}점
+                                    </span>
+                                  </div>
+                                  <p className="text-[var(--foreground)]/70 ml-6">{record.note}</p>
+                                  <p className="text-xs text-[var(--foreground)]/40 ml-6 mt-1">
+                                    {new Date(record.completedAt).toLocaleString('ko-KR')}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-[var(--foreground)]/50">아직 완료한 미션이 없습니다.</p>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* 전체 점수 요약 */}
+                  <div className="mt-4 pt-4 border-t border-[var(--border)]">
+                    <h4 className="font-semibold mb-3">점수 순위</h4>
+                    <div className="space-y-2">
+                      {[...searchedGroup.matchings]
+                        .map((matching) => ({
+                          name: matching.from,
+                          score: (matching.missionRecords || []).reduce((sum, record) => {
+                            const mission = (searchedGroup.missions || []).find((m) => m.id === record.missionId);
+                            return sum + (mission?.score || 0);
+                          }, 0),
+                        }))
+                        .sort((a, b) => b.score - a.score)
+                        .map((item, index) => (
+                          <div
+                            key={item.name}
+                            className="flex items-center justify-between bg-[var(--background)] rounded-lg px-4 py-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">
+                                {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}
+                              </span>
+                              <span className="font-medium">{item.name}</span>
+                            </div>
+                            <span className="font-semibold text-[var(--primary)]">{item.score}점</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-6">
               <div className="text-4xl mb-2">🤔</div>
@@ -186,7 +274,7 @@ export default function AdminPage() {
                     <h3 className="font-semibold text-[var(--foreground)]">{group.groupName}</h3>
                     <p className="text-sm text-[var(--foreground)]/60">리더: {group.leaderName}</p>
                     <p className="text-xs text-[var(--foreground)]/40 mt-1">
-                      참가자: {group.members.length}명 | 
+                      참가자: {(group.members || []).length}명 |
                       {group.matchings ? ' ✅ 매칭 완료' : ' ⏳ 매칭 대기'}
                     </p>
                     <p className="text-xs text-[var(--secondary)] mt-1">

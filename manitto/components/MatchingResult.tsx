@@ -43,6 +43,16 @@ export default function MatchingResult({ matchings, leaderName, groupName }: Mat
                 {matching.to}
               </span>
             </div>
+            {matching.matchingPassword && (
+              <div className="mt-2 text-center">
+                <span className="text-xs text-[var(--foreground)]/60">
+                  매칭 비밀번호:{' '}
+                </span>
+                <span className="text-sm font-semibold text-[var(--primary)]">
+                  {matching.matchingPassword}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>
