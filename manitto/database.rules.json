@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "manitto": {
+      "groups": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["password", "createdAt"],
+        "$groupId": {
+          ".validate": "newData.hasChildren(['id', 'groupName', 'leaderName', 'password', 'members', 'createdAt'])"
+        }
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

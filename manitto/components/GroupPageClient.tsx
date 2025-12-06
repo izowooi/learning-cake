@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getGroupById, addMember, updateMember, removeMember, saveMatchings } from '@/lib/storage';
+import { getGroupById, addMember, updateMember, removeMember, saveMatchings } from '@/lib/firebase-storage';
 import { createCircularMatching } from '@/lib/matching';
 import { Group } from '@/lib/types';
 import MemberList from '@/components/MemberList';
@@ -21,14 +21,22 @@ export default function GroupPageClient({ groupId }: GroupPageClientProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadedGroup = getGroupById(groupId);
-    if (loadedGroup) {
-      setGroup(loadedGroup);
-    }
-    setIsLoading(false);
+    const loadGroup = async () => {
+      try {
+        const loadedGroup = await getGroupById(groupId);
+        if (loadedGroup) {
+          setGroup(loadedGroup);
+        }
+      } catch (err) {
+        console.error('Failed to load group:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadGroup();
   }, [groupId]);
 
-  const handleAddMember = (e: React.FormEvent) => {
+  const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -43,34 +51,46 @@ export default function GroupPageClient({ groupId }: GroupPageClientProps) {
       return;
     }
 
-    const updatedGroup = addMember(groupId, name);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
-      setNewMemberName('');
+    try {
+      const updatedGroup = await addMember(groupId, name);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+        setNewMemberName('');
+      }
+    } catch (err) {
+      setError('멤버 추가 중 오류가 발생했습니다.');
     }
   };
 
-  const handleUpdateMember = (oldName: string, newName: string) => {
+  const handleUpdateMember = async (oldName: string, newName: string) => {
     if (group?.members.includes(newName) && oldName !== newName) {
       setError('이미 존재하는 이름입니다.');
       return;
     }
 
-    const updatedGroup = updateMember(groupId, oldName, newName);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
-      setError('');
+    try {
+      const updatedGroup = await updateMember(groupId, oldName, newName);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+        setError('');
+      }
+    } catch (err) {
+      setError('멤버 수정 중 오류가 발생했습니다.');
     }
   };
 
-  const handleDeleteMember = (name: string) => {
-    const updatedGroup = removeMember(groupId, name);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
+  const handleDeleteMember = async (name: string) => {
+    try {
+      const updatedGroup = await removeMember(groupId, name);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+      }
+    } catch (err) {
+      setError('멤버 삭제 중 오류가 발생했습니다.');
     }
   };
 
-  const handleStartMatching = () => {
+  const handleStartMatching = async () => {
     if (!group || group.members.length < 2) {
       setError('매칭을 시작하려면 최소 2명이 필요합니다.');
       return;
@@ -78,7 +98,7 @@ export default function GroupPageClient({ groupId }: GroupPageClientProps) {
 
     try {
       const matchings = createCircularMatching(group.members);
-      const updatedGroup = saveMatchings(groupId, matchings);
+      const updatedGroup = await saveMatchings(groupId, matchings);
       if (updatedGroup) {
         router.push(`/result/${groupId}`);
       }

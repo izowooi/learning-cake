@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAllGroups, findGroupByPassword, deleteGroup } from '@/lib/storage';
+import { getAllGroups, findGroupByPassword, deleteGroup } from '@/lib/firebase-storage';
 import { Group } from '@/lib/types';
 import MatchingResult from '@/components/MatchingResult';
 
@@ -14,12 +14,20 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadedGroups = getAllGroups();
-    setGroups(loadedGroups);
-    setIsLoading(false);
+    const loadGroups = async () => {
+      try {
+        const loadedGroups = await getAllGroups();
+        setGroups(loadedGroups);
+      } catch (err) {
+        console.error('Failed to load groups:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadGroups();
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearchError('');
     setSearchedGroup(null);
@@ -29,22 +37,30 @@ export default function AdminPage() {
       return;
     }
 
-    const group = findGroupByPassword(password.trim());
-    if (group) {
-      setSearchedGroup(group);
-    } else {
-      setSearchError('해당 비밀번호의 그룹을 찾을 수 없습니다.');
+    try {
+      const group = await findGroupByPassword(password.trim());
+      if (group) {
+        setSearchedGroup(group);
+      } else {
+        setSearchError('해당 비밀번호의 그룹을 찾을 수 없습니다.');
+      }
+    } catch (err) {
+      setSearchError('검색 중 오류가 발생했습니다.');
     }
   };
 
-  const handleDeleteGroup = (id: string, groupName: string) => {
+  const handleDeleteGroup = async (id: string, groupName: string) => {
     if (confirm(`"${groupName}" 그룹을 삭제하시겠습니까?`)) {
-      const success = deleteGroup(id);
-      if (success) {
-        setGroups(groups.filter(g => g.id !== id));
-        if (searchedGroup?.id === id) {
-          setSearchedGroup(null);
+      try {
+        const success = await deleteGroup(id);
+        if (success) {
+          setGroups(groups.filter(g => g.id !== id));
+          if (searchedGroup?.id === id) {
+            setSearchedGroup(null);
+          }
         }
+      } catch (err) {
+        console.error('Failed to delete group:', err);
       }
     }
   };

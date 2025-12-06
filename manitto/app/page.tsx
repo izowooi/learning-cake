@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createGroup, findGroupByNameAndLeader } from '@/lib/storage';
+import { createGroup, findGroupByNameAndLeader } from '@/lib/firebase-storage';
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,7 +12,7 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -23,22 +23,29 @@ export default function HomePage() {
 
     setIsLoading(true);
 
-    // 중복 체크
-    const existingGroup = findGroupByNameAndLeader(groupName.trim(), leaderName.trim());
-    if (existingGroup) {
-      setError(`이미 "${groupName}" 그룹의 "${leaderName}" 리더가 존재합니다.`);
+    try {
+      // 중복 체크
+      const existingGroup = await findGroupByNameAndLeader(groupName.trim(), leaderName.trim());
+      if (existingGroup) {
+        setError(`이미 "${groupName}" 그룹의 "${leaderName}" 리더가 존재합니다.`);
+        setIsLoading(false);
+        return;
+      }
+
+      // 그룹 생성
+      const newGroup = await createGroup({
+        groupName: groupName.trim(),
+        leaderName: leaderName.trim(),
+      });
+
+      // 이름 입력 페이지로 이동
+      router.push(`/group?id=${newGroup.id}`);
+    } catch (err) {
+      console.error('그룹 생성 에러:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(`그룹 생성 중 오류: ${errorMessage}`);
       setIsLoading(false);
-      return;
     }
-
-    // 그룹 생성
-    const newGroup = createGroup({
-      groupName: groupName.trim(),
-      leaderName: leaderName.trim(),
-    });
-
-    // 이름 입력 페이지로 이동
-    router.push(`/group?id=${newGroup.id}`);
   };
 
   return (

@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "clever-lemon": {
+      "database": {
+        "manitto": [
+          "manitto"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

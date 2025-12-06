@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getGroupById } from '@/lib/storage';
+import { getGroupById } from '@/lib/firebase-storage';
 import { Group } from '@/lib/types';
 import MatchingResult from '@/components/MatchingResult';
 
@@ -15,11 +15,19 @@ export default function ResultPageClient({ groupId }: ResultPageClientProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadedGroup = getGroupById(groupId);
-    if (loadedGroup) {
-      setGroup(loadedGroup);
-    }
-    setIsLoading(false);
+    const loadGroup = async () => {
+      try {
+        const loadedGroup = await getGroupById(groupId);
+        if (loadedGroup) {
+          setGroup(loadedGroup);
+        }
+      } catch (err) {
+        console.error('Failed to load group:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadGroup();
   }, [groupId]);
 
   if (isLoading) {

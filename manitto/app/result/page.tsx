@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getGroupById } from '@/lib/storage';
+import { getGroupById } from '@/lib/firebase-storage';
 import { Group } from '@/lib/types';
 import MatchingResult from '@/components/MatchingResult';
 
@@ -15,13 +15,20 @@ function ResultPageContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (groupId) {
-      const loadedGroup = getGroupById(groupId);
-      if (loadedGroup) {
-        setGroup(loadedGroup);
+    const loadGroup = async () => {
+      if (groupId) {
+        try {
+          const loadedGroup = await getGroupById(groupId);
+          if (loadedGroup) {
+            setGroup(loadedGroup);
+          }
+        } catch (err) {
+          console.error('Failed to load group:', err);
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+    loadGroup();
   }, [groupId]);
 
   if (isLoading) {

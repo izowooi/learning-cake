@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getGroupById, addMember, updateMember, removeMember, saveMatchings } from '@/lib/storage';
+import { getGroupById, addMember, updateMember, removeMember, saveMatchings } from '@/lib/firebase-storage';
 import { createCircularMatching } from '@/lib/matching';
 import { Group } from '@/lib/types';
 import MemberList from '@/components/MemberList';
@@ -19,16 +19,23 @@ function GroupPageContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (groupId) {
-      const loadedGroup = getGroupById(groupId);
-      if (loadedGroup) {
-        setGroup(loadedGroup);
+    const loadGroup = async () => {
+      if (groupId) {
+        try {
+          const loadedGroup = await getGroupById(groupId);
+          if (loadedGroup) {
+            setGroup(loadedGroup);
+          }
+        } catch (err) {
+          console.error('Failed to load group:', err);
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+    loadGroup();
   }, [groupId]);
 
-  const handleAddMember = (e: React.FormEvent) => {
+  const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -38,47 +45,59 @@ function GroupPageContent() {
       return;
     }
 
-    if (group?.members.includes(name)) {
+    if ((group?.members || []).includes(name)) {
       setError('이미 추가된 이름입니다.');
       return;
     }
 
-    const updatedGroup = addMember(groupId, name);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
-      setNewMemberName('');
+    try {
+      const updatedGroup = await addMember(groupId, name);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+        setNewMemberName('');
+      }
+    } catch (err) {
+      setError('멤버 추가 중 오류가 발생했습니다.');
     }
   };
 
-  const handleUpdateMember = (oldName: string, newName: string) => {
-    if (group?.members.includes(newName) && oldName !== newName) {
+  const handleUpdateMember = async (oldName: string, newName: string) => {
+    if ((group?.members || []).includes(newName) && oldName !== newName) {
       setError('이미 존재하는 이름입니다.');
       return;
     }
 
-    const updatedGroup = updateMember(groupId, oldName, newName);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
-      setError('');
+    try {
+      const updatedGroup = await updateMember(groupId, oldName, newName);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+        setError('');
+      }
+    } catch (err) {
+      setError('멤버 수정 중 오류가 발생했습니다.');
     }
   };
 
-  const handleDeleteMember = (name: string) => {
-    const updatedGroup = removeMember(groupId, name);
-    if (updatedGroup) {
-      setGroup(updatedGroup);
+  const handleDeleteMember = async (name: string) => {
+    try {
+      const updatedGroup = await removeMember(groupId, name);
+      if (updatedGroup) {
+        setGroup(updatedGroup);
+      }
+    } catch (err) {
+      setError('멤버 삭제 중 오류가 발생했습니다.');
     }
   };
 
-  const handleStartMatching = () => {
-    if (!group || group.members.length < 2) {
+  const handleStartMatching = async () => {
+    if (!group || (group.members || []).length < 2) {
       setError('매칭을 시작하려면 최소 2명이 필요합니다.');
       return;
     }
 
     try {
-      const matchings = createCircularMatching(group.members);
-      const updatedGroup = saveMatchings(groupId, matchings);
+      const matchings = createCircularMatching(group.members || []);
+      const updatedGroup = await saveMatchings(groupId, matchings);
       if (updatedGroup) {
         router.push(`/result?id=${groupId}`);
       }
@@ -164,11 +183,11 @@ function GroupPageContent() {
       <div className="bg-[var(--card-bg)] rounded-2xl shadow-lg p-6 mb-6 border border-[var(--border)]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">참가자 목록</h2>
-          <span className="text-sm text-[var(--foreground)]/60">{group.members.length}명</span>
+          <span className="text-sm text-[var(--foreground)]/60">{(group.members || []).length}명</span>
         </div>
         
         <MemberList
-          members={group.members}
+          members={group.members || []}
           onUpdate={handleUpdateMember}
           onDelete={handleDeleteMember}
         />
@@ -177,13 +196,13 @@ function GroupPageContent() {
       {/* 매칭 시작 버튼 */}
       <button
         onClick={handleStartMatching}
-        disabled={group.members.length < 2}
+        disabled={(group.members || []).length < 2}
         className="w-full bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white font-semibold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl text-lg"
       >
         🎲 매칭 시작
       </button>
 
-      {group.members.length < 2 && (
+      {(group.members || []).length < 2 && (
         <p className="text-center text-sm text-[var(--foreground)]/50 mt-3">
           매칭을 시작하려면 최소 2명의 참가자가 필요합니다
         </p>
