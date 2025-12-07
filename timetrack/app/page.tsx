@@ -173,10 +173,81 @@ export default function Home() {
     setShowTaskModal(true);
   };
 
-  const handleSaveTask = async (taskData: Omit<Task, 'id'>) => {
+  // 연차 일수 계산 (시작일과 종료일 포함)
+  const calculateVacationDays = (startDate: string, endDate: string): number => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = end.getTime() - start.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  };
+
+  // 날짜에 일수 추가
+  const addDays = (dateStr: string, days: number): string => {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split('T')[0];
+  };
+
+  // 업무 딜레이 처리
+  const delayTasksForVacation = async (
+    memberId: string,
+    vacationStartDate: string,
+    vacationEndDate: string,
+    excludeTaskId?: string
+  ) => {
+    const member = getMembersWithTasks().find((m) => m.id === memberId);
+    if (!member) return;
+
+    const vacationDays = calculateVacationDays(vacationStartDate, vacationEndDate);
+    const vacStart = new Date(vacationStartDate);
+
+    // 딜레이가 필요한 업무들 찾기 (연차와 겹치거나 연차 이후의 업무)
+    const tasksToDelay = member.taskList.filter((task) => {
+      if (task.id === excludeTaskId) return false;
+      if (task.status === 'vacation') return false;
+
+      const taskEnd = new Date(task.endDate);
+
+      // 업무 종료일이 연차 시작일 이후인 경우 (겹치거나 이후)
+      return taskEnd >= vacStart;
+    });
+
+    // 각 업무를 딜레이
+    for (const task of tasksToDelay) {
+      const taskStart = new Date(task.startDate);
+      const vacStartDate = new Date(vacationStartDate);
+
+      // 시작일은 유지하고 종료일만 연차 일수만큼 뒤로 밀기
+      const newEndDate = addDays(task.endDate, vacationDays);
+
+      await updateTask(currentTeamName, memberId, task.id, {
+        endDate: newEndDate,
+      });
+    }
+  };
+
+  const handleSaveTask = async (taskData: Omit<Task, 'id'>, delayOtherTasks?: boolean) => {
     if (!selectedMemberId) return;
 
+    // 연차 추가 시 다른 업무 딜레이 처리
+    if (taskData.status === 'vacation' && delayOtherTasks && !editingTask) {
+      await delayTasksForVacation(
+        selectedMemberId,
+        taskData.startDate,
+        taskData.endDate
+      );
+    }
+
     if (editingTask) {
+      // 기존 업무를 연차로 변경하는 경우
+      if (taskData.status === 'vacation' && editingTask.status !== 'vacation' && delayOtherTasks) {
+        await delayTasksForVacation(
+          selectedMemberId,
+          taskData.startDate,
+          taskData.endDate,
+          editingTask.id
+        );
+      }
       await updateTask(currentTeamName, selectedMemberId, editingTask.id, taskData);
     } else {
       await addTask(currentTeamName, selectedMemberId, taskData);
@@ -417,6 +488,7 @@ export default function Home() {
           }}
           onSave={handleSaveTask}
           initialData={editingTask || undefined}
+          existingTasks={members.find((m) => m.id === selectedMemberId)?.taskList || []}
         />
       )}
     </div>

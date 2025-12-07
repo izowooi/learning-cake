@@ -1,23 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Task, TaskStatus } from '@/types';
 import { STATUS_LABELS } from '@/types';
 
 interface TaskModalProps {
   onClose: () => void;
-  onSave: (task: Omit<Task, 'id'>) => void;
+  onSave: (task: Omit<Task, 'id'>, delayOtherTasks?: boolean) => void;
   initialData?: Task;
+  existingTasks?: (Task & { id: string })[];
 }
 
-export default function TaskModal({ onClose, onSave, initialData }: TaskModalProps) {
+export default function TaskModal({ onClose, onSave, initialData, existingTasks = [] }: TaskModalProps) {
   const today = new Date().toISOString().split('T')[0];
 
   const [title, setTitle] = useState(initialData?.title || '');
   const [startDate, setStartDate] = useState(initialData?.startDate || today);
   const [endDate, setEndDate] = useState(initialData?.endDate || today);
   const [status, setStatus] = useState<TaskStatus>(initialData?.status || 'pending');
+  const [delayTasks, setDelayTasks] = useState(true);
   const [error, setError] = useState('');
+
+  // 연차 선택 시에만 딜레이 옵션 표시
+  const showDelayOption = status === 'vacation';
+
+  // 연차와 겹치는 업무가 있는지 확인
+  const hasOverlappingTasks = existingTasks.some((task) => {
+    if (task.id === (initialData as Task & { id: string })?.id) return false;
+    if (task.status === 'vacation') return false;
+
+    const taskStart = new Date(task.startDate);
+    const taskEnd = new Date(task.endDate);
+    const vacStart = new Date(startDate);
+    const vacEnd = new Date(endDate);
+
+    // 업무가 연차 기간과 겹치거나 연차 이후에 있는 경우
+    return taskEnd >= vacStart;
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,12 +56,15 @@ export default function TaskModal({ onClose, onSave, initialData }: TaskModalPro
       return;
     }
 
-    onSave({
-      title: title.trim(),
-      startDate,
-      endDate,
-      status,
-    });
+    onSave(
+      {
+        title: title.trim(),
+        startDate,
+        endDate,
+        status,
+      },
+      showDelayOption && delayTasks
+    );
   };
 
   return (
@@ -112,6 +134,26 @@ export default function TaskModal({ onClose, onSave, initialData }: TaskModalPro
               ))}
             </select>
           </div>
+
+          {/* 연차 선택 시 업무 딜레이 옵션 */}
+          {showDelayOption && hasOverlappingTasks && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={delayTasks}
+                  onChange={(e) => setDelayTasks(e.target.checked)}
+                  className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500"
+                />
+                <span className="text-sm text-yellow-800">
+                  연차 기간만큼 다른 업무 자동 딜레이
+                </span>
+              </label>
+              <p className="text-xs text-yellow-600 mt-1 ml-6">
+                연차와 겹치거나 이후에 있는 업무들이 연차 일수만큼 뒤로 밀립니다.
+              </p>
+            </div>
+          )}
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
