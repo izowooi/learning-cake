@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ganttly - 팀 일정 관리',
     description: '팀원들의 업무 일정을 시각화하여 관리하세요',
-    url: 'https://ganttly.pages.dev',
     siteName: 'Ganttly',
     images: [
       {
