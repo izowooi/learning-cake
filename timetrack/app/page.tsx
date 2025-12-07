@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getTeam, createTeam, teamExists, subscribeToTeam, addMember, deleteMember, addTask, updateTask, deleteTask } from '@/lib/db';
+import { signInAnonymous, onAuthChange, getCurrentUser } from '@/lib/auth';
 import type { Team, Task, MemberWithTasks, TaskStatus } from '@/types';
 import { STATUS_COLORS, STATUS_LABELS } from '@/types';
 import GanttChart from '@/components/GanttChart';
@@ -11,7 +12,7 @@ import TaskModal from '@/components/TaskModal';
 const LAST_TEAM_KEY = 'ganttly_last_team';
 
 type ViewMode = 'week' | 'month';
-type AppState = 'loading' | 'login' | 'team';
+type AppState = 'loading' | 'entrance' | 'login' | 'team';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('loading');
@@ -31,18 +32,42 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<(Task & { id: string }) | null>(null);
 
   useEffect(() => {
-    const lastTeam = localStorage.getItem(LAST_TEAM_KEY);
-    if (lastTeam) {
-      try {
-        const { teamName: savedTeam, password: savedPassword } = JSON.parse(lastTeam);
-        handleLogin(savedTeam, savedPassword, true);
-      } catch {
-        localStorage.removeItem(LAST_TEAM_KEY);
-        setAppState('login');
+    const initializeAuth = async () => {
+      const lastTeam = localStorage.getItem(LAST_TEAM_KEY);
+
+      // Check if user is already authenticated
+      const currentUser = getCurrentUser();
+
+      if (currentUser) {
+        // Already authenticated
+        if (lastTeam) {
+          try {
+            const { teamName: savedTeam, password: savedPassword } = JSON.parse(lastTeam);
+            handleLogin(savedTeam, savedPassword, true);
+          } catch {
+            localStorage.removeItem(LAST_TEAM_KEY);
+            setAppState('login');
+          }
+        } else {
+          setAppState('login');
+        }
+      } else if (lastTeam) {
+        // Has saved team but not authenticated - try to sign in
+        try {
+          await signInAnonymous();
+          const { teamName: savedTeam, password: savedPassword } = JSON.parse(lastTeam);
+          handleLogin(savedTeam, savedPassword, true);
+        } catch {
+          localStorage.removeItem(LAST_TEAM_KEY);
+          setAppState('entrance');
+        }
+      } else {
+        // No saved team - show entrance screen
+        setAppState('entrance');
       }
-    } else {
-      setAppState('login');
-    }
+    };
+
+    initializeAuth();
   }, []);
 
   useEffect(() => {
@@ -144,6 +169,20 @@ export default function Home() {
       handleCreate();
     } else {
       handleLogin(teamName, password);
+    }
+  };
+
+  const handleEntrance = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await signInAnonymous();
+      setAppState('login');
+    } catch (err) {
+      console.error(err);
+      setError('입장 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,6 +327,34 @@ export default function Home() {
           <p className="text-gray-600">로딩 중...</p>
         </div>
       </div>
+    );
+  }
+
+  // Entrance page
+  if (appState === 'entrance') {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Ganttly</h1>
+            <p className="text-gray-600 text-lg">팀 일정을 한눈에 관리하세요</p>
+          </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleEntrance}
+            disabled={loading}
+            className="px-8 py-4 bg-blue-500 text-white text-lg font-medium rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          >
+            {loading ? '입장 중...' : '입장하기'}
+          </button>
+        </div>
+      </main>
     );
   }
 

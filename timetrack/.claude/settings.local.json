@@ -4,7 +4,10 @@
       "Bash(find:*)",
       "Bash(tree:*)",
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "mcp__plugin_firebase_firebase__firebase_get_environment",
+      "mcp__plugin_firebase_firebase__firebase_update_environment",
+      "mcp__plugin_firebase_firebase__firebase_get_security_rules"
     ],
     "deny": [],
     "ask": []
