@@ -5,9 +5,5 @@ compatibility_flags = ["nodejs_compat"]
 # OpenNext output directory
 pages_build_output_dir = ".open-next/assets"
 
-# Build command for Cloudflare Pages
-[build]
-command = "npm run build:cloudflare"
-
 [vars]
 # Environment variables can be set here or in Cloudflare dashboard
