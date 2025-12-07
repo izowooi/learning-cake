@@ -2,22 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated } from '@/lib/auth';
+import { subscribeToAuthState } from '@/lib/auth';
 
 export default function RootPage() {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const authenticated = isAuthenticated();
-
-    if (authenticated) {
-      router.replace('/home');
-    } else {
-      router.replace('/login');
-    }
-
-    setChecking(false);
+    const unsubscribe = subscribeToAuthState((state) => {
+      if (!state.loading) {
+        if (state.user) {
+          router.replace('/home');
+        } else {
+          router.replace('/login');
+        }
+        setChecking(false);
+      }
+    });
+    return () => unsubscribe();
   }, [router]);
 
   if (checking) {
