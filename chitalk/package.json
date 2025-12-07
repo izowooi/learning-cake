@@ -1,19 +1,22 @@
 {
   "name": "learning-cake",
   "version": "1.0.0",
-  "description": "영어 학습 웹앱 - 읽기, 듣기, 단어, 문제, 쓰기를 통한 영어 증진",
+  "description": "중국어 학습 웹앱 - 읽기, 듣기, 단어, 문제, 쓰기를 통한 중국어 실력 향상",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "npx @opennextjs/cloudflare build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "npx wrangler pages dev",
+    "deploy": "npx wrangler pages deploy"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/izowooi/learning-cake.git"
   },
   "keywords": [
-    "english",
+    "chinese",
     "learning",
     "education"
   ],
@@ -32,7 +35,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "autoprefixer": "^10.4.22",
-    "next": "^14.2.33",
+    "next": "^15.5.2",
     "openai": "^6.9.1",
     "postcss": "^8.5.6",
     "react": "^18.3.1",
@@ -41,7 +44,9 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.4",
     "eslint": "^9.28.0",
-    "eslint-config-next": "^15.3.4"
+    "eslint-config-next": "^15.3.4",
+    "wrangler": "^4.53.0"
   }
 }

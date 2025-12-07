@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { synthesizeSpeech, type TTSVoice, type TTSProvider } from '@/lib/tts'
 import { verifyApiAuth, unauthorizedResponse } from '@/lib/auth/api-auth'
 
-export const runtime = 'edge'
-
 export async function POST(request: NextRequest) {
   // Auth check
   const authResult = verifyApiAuth(request)
