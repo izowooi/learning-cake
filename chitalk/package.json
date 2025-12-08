@@ -5,11 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:cloudflare": "npx @opennextjs/cloudflare build",
     "start": "next start",
-    "lint": "next lint",
-    "preview": "npx wrangler pages dev",
-    "deploy": "npx wrangler pages deploy"
+    "lint": "next lint"
   },
   "repository": {
     "type": "git",
@@ -44,9 +41,7 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.14.4",
     "eslint": "^9.28.0",
-    "eslint-config-next": "^15.3.4",
-    "wrangler": "^4.53.0"
+    "eslint-config-next": "^15.3.4"
   }
 }

@@ -2,8 +2,8 @@ name = "chitalk"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-# OpenNext output directory
-pages_build_output_dir = ".open-next/assets"
+# next-on-pages output directory
+pages_build_output_dir = ".vercel/output/static"
 
 [vars]
 # Environment variables can be set here or in Cloudflare dashboard
