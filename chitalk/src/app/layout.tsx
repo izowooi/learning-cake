@@ -10,8 +10,13 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: 'Learning Cake - 영어 학습 웹앱',
-  description: '읽기, 듣기, 단어, 문제, 쓰기를 통한 영어 학습',
+  title: 'Learning Cake - 중국어 학습 웹앱',
+  description: '읽기, 듣기, 단어, 문제, 쓰기를 통한 중국어 학습',
+  openGraph: {
+    title: 'Learning Cake - 중국어 학습 웹앱',
+    description: '읽기, 듣기, 단어, 문제, 쓰기를 통한 중국어 학습',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({
