@@ -51,7 +51,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🎌</div>
+          <div className="text-6xl mb-4">💬</div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
             NihoTalk
           </h1>

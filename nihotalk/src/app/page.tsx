@@ -23,7 +23,7 @@ function HomeContent() {
             NihoTalk
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-4">
-            🎌 일본어 학습을 맛있게!
+            💬 일본어 학습을 맛있게!
           </p>
           <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
             AI가 생성한 맞춤형 지문으로 읽기, 듣기, 단어, 문제, 쓰기까지<br />
