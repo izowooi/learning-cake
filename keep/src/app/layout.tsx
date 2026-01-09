@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://keepi.pages.dev'),
   title: 'Keep',
   description: '친구들과 메모를 공유하세요.',
   manifest: '/manifest.json',
@@ -13,19 +14,6 @@ export const metadata: Metadata = {
     capable: true,
     title: 'Keep',
     statusBarStyle: 'default',
-  },
-  openGraph: {
-    title: 'Keep',
-    description: '친구들과 메모를 공유하세요.',
-    type: 'website',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Keep',
-      },
-    ],
   },
 };
 

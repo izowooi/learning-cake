@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run build:*)",
       "mcp__plugin_firebase_firebase__firebase_get_security_rules",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:keepi.pages.dev)"
     ],
     "deny": [],
     "ask": []
