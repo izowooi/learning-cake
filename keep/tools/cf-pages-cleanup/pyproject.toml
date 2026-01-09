@@ -1,0 +1,16 @@
+[project]
+name = "cf-pages-cleanup"
+version = "0.1.0"
+description = "Cloudflare Pages 배포 정리 도구 - 최신 배포를 제외한 나머지 삭제"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "httpx>=0.27.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]

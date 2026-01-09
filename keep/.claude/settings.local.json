@@ -4,7 +4,19 @@
       "Bash(npm run build:*)",
       "mcp__plugin_firebase_firebase__firebase_get_security_rules",
       "Bash(curl:*)",
-      "WebFetch(domain:keepi.pages.dev)"
+      "WebFetch(domain:keepi.pages.dev)",
+      "Bash(wrangler --version:*)",
+      "WebSearch",
+      "Bash(npm install:*)",
+      "Bash(wrangler login:*)",
+      "Bash(wrangler whoami:*)",
+      "Bash(wrangler pages deployment list:*)",
+      "Bash(while read id)",
+      "Bash(do echo \"Deleting $id...\" wrangler pages deployment delete \"$id\" --project-name=keepi --force 2)",
+      "Bash(1 done)",
+      "Bash(wrangler pages deployment:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run python:*)"
     ],
     "deny": [],
     "ask": []
