@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "mcp__plugin_firebase_firebase__firebase_get_environment",
+      "mcp__plugin_firebase_firebase__firebase_list_projects",
+      "mcp__plugin_firebase_firebase__firebase_update_environment",
+      "mcp__plugin_firebase_firebase__firebase_list_apps",
+      "mcp__plugin_firebase_firebase__firebase_get_sdk_config",
+      "mcp__plugin_firebase_firebase__firebase_get_security_rules",
+      "mcp__plugin_firebase_firebase__firebase_create_app",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(node /Users/izowooi/git/learning-cake/manitto/scripts/insert-dummy-data.mjs:*)",
+      "mcp__plugin_firebase_firebase__firebase_init",
+      "Bash(npx firebase-tools deploy:*)",
+      "Bash(npx firebase-tools target:apply:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

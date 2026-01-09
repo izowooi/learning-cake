@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(npm view:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:cloudflare:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(npx @cloudflare/next-on-pages@1)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
