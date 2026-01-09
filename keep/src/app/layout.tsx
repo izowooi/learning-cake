@@ -18,6 +18,14 @@ export const metadata: Metadata = {
     title: 'Keep',
     description: '친구들과 메모를 공유하세요.',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Keep',
+      },
+    ],
   },
 };
 
