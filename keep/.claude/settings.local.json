@@ -16,7 +16,10 @@
       "Bash(1 done)",
       "Bash(wrangler pages deployment:*)",
       "Bash(uv sync:*)",
-      "Bash(uv run python:*)"
+      "Bash(uv run python:*)",
+      "WebFetch(domain:clipplay.pages.dev)",
+      "Bash(sips:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []
