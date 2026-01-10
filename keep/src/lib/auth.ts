@@ -1,5 +1,7 @@
 import {
   signInAnonymously,
+  signInWithPopup,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signOut as firebaseSignOut,
   User
@@ -38,6 +40,13 @@ export function isAuthenticated(): boolean {
 // 익명 로그인
 export async function login(): Promise<void> {
   await signInAnonymously(auth);
+}
+
+// Google 로그인
+const googleProvider = new GoogleAuthProvider();
+
+export async function loginWithGoogle(): Promise<void> {
+  await signInWithPopup(auth, googleProvider);
 }
 
 // 로그아웃
